@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeDebug } from "@/components/theme-debug";
 import { AuthProvider } from "@/lib/auth-context";
 import { Navbar } from "@/components/navbar";
 
@@ -36,7 +35,6 @@ export default function RootLayout({
               </main>
             </div>
             <Toaster position="top-center" />
-            <ThemeDebug />
           </AuthProvider>
         </ThemeProvider>
       </body>

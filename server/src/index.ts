@@ -1,13 +1,16 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import jwt from '@fastify/jwt';
 import dotenv from 'dotenv';
 import { itineraryRoutes } from './routes/itinerary';
+import { authRoutes } from './routes/auth';
 
 
 // Load environment variables
 dotenv.config();
 
 const PORT = process.env.PORT || 3001;
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
 // Create Fastify instance
 const server = Fastify({
@@ -20,8 +23,13 @@ server.register(cors, {
   credentials: true
 });
 
+server.register(jwt, {
+  secret: JWT_SECRET
+});
+
 // Register routes
 server.register(itineraryRoutes, { prefix: '/api' });
+server.register(authRoutes, { prefix: '/api/auth' });
 
 // Health check route
 server.get('/health', async () => {

@@ -54,9 +54,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-        <div className="flex flex-col space-y-2 text-center">
+    <div className="flex min-h-screen w-full items-center justify-center px-4 py-12">
+      <div className="mx-auto w-full max-w-[350px] space-y-6">
+        <div className="flex flex-col space-y-2 text-center w-full">
           <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="text-sm text-muted-foreground">
             Enter your credentials to sign in to your account
@@ -64,7 +64,7 @@ export default function LoginPage() {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
             <FormField
               control={form.control}
               name="email"

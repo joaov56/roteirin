@@ -4,12 +4,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
-import { Navbar } from "@/components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Roteirin - AI Travel Itinerary Generator",
+  title: "Roteirizando - AI Travel Itinerary Generator",
   description: "Generate personalized travel itineraries with AI. Plan your perfect trip with customizable activities based on your preferences and budget.",
 };
 
@@ -29,7 +28,6 @@ export default function RootLayout({
         >
           <AuthProvider>
             <div className="relative flex min-h-screen flex-col">
-              <Navbar />
               <main className="flex-1">
                 {children}
               </main>

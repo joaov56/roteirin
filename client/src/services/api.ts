@@ -46,7 +46,7 @@ export interface Itinerary {
 
 export const generateItinerary = async (data: ItineraryRequest): Promise<Itinerary> => {
   try {
-    const response = await api.post<Itinerary>('/itinerary', data);
+    const response = await api.post<Itinerary>('/itinerary/generate', data);
     return response.data;
   } catch (error) {
     console.error('Error generating itinerary:', error);

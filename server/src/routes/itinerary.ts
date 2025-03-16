@@ -2,16 +2,18 @@ import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
 import { regenerateItem } from '../services/itineraryService';
 import { itinerarySchema } from '../schemas/itinerarySchema';
-import { generateItineraryController } from '../controllers/itineraryController';
+import { ItineraryController } from '../controllers/itineraryController';
 
 export async function itineraryRoutes(
   fastify: FastifyInstance,
   options: FastifyPluginOptions
 ): Promise<void> {
+  const itineraryController = new ItineraryController();
+
   // Generate a new itinerary
   fastify.post('/itinerary', {
     schema: itinerarySchema,
-    handler: generateItineraryController
+    handler: itineraryController.generate.bind(itineraryController)
   });
 
   // Regenerate a specific item in the itinerary

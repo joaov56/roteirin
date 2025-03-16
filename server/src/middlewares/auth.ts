@@ -8,6 +8,10 @@ interface RequestWithUser extends FastifyRequest {
     id: string;
     email: string;
   }
+  authenticatedUser: {
+    id: string;
+    email: string;
+  }
 }
 
 export const authenticate = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -23,7 +27,7 @@ export const authenticate = async (request: FastifyRequest, reply: FastifyReply)
     }
     
     // Add user to request for use in route handlers
-    (request as any).user = { id: user.id, email: user.email };
+    (request as any).authenticatedUser = { id: user.id, email: user.email };
   } catch (err) {
     reply.status(401).send({ error: 'Authentication required' });
   }

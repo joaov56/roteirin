@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { User } from '../entities/User';
+import { Itinerary } from '../entities/Itinerary';
+import { ItineraryItem } from '../entities/ItineraryItem';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -16,7 +18,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_DATABASE || 'roteirin',
   synchronize: true, // Set to false in production
   logging: process.env.NODE_ENV !== 'production',
-  entities: [User],
+  entities: [User, Itinerary, ItineraryItem],
   subscribers: [],
   migrations: [path.join(__dirname, '../migrations/*.{ts,js}')],
 }); 

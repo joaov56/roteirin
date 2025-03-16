@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, MapPinIcon, DollarSignIcon, RefreshCwIcon } from 'lucide-react';
+import SaveItineraryButton from './SaveItineraryButton';
 
 interface ItineraryDisplayProps {
   itinerary: Itinerary;
@@ -45,11 +46,14 @@ export default function ItineraryDisplay({ itinerary, onItineraryUpdate }: Itine
   return (
     <Card className="overflow-hidden">
       <CardHeader className="bg-primary text-primary-foreground">
-        <div className="flex items-center gap-2">
-          <CalendarIcon className="h-5 w-5" />
-          <div className="text-sm">
-            {new Date(itinerary.startDate).toLocaleDateString()} - {new Date(itinerary.endDate).toLocaleDateString()}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="h-5 w-5" />
+            <div className="text-sm">
+              {new Date(itinerary.startDate).toLocaleDateString()} - {new Date(itinerary.endDate).toLocaleDateString()}
+            </div>
           </div>
+          <SaveItineraryButton itinerary={itinerary} />
         </div>
         <CardTitle className="text-2xl">{itinerary.destination}</CardTitle>
         {itinerary.budget && (

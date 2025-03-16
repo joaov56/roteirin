@@ -6,7 +6,7 @@ import ItineraryDisplay from '@/components/ItineraryDisplay';
 import { Itinerary, ItineraryRequest, generateItinerary } from '@/services/api';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import Header from '@/components/Header';
+
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -29,9 +29,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      
+    <div className="min-h-screen bg-background flex flex-col">      
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-12">

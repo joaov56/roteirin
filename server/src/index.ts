@@ -5,6 +5,7 @@ import jwt from '@fastify/jwt';
 import dotenv from 'dotenv';
 import { itineraryRoutes } from './routes/itinerary';
 import { authRoutes } from './routes/auth';
+import { itineraryRoutes as savedItineraryRoutes } from './routes/itineraryRoutes';
 import { initializeDatabase } from './config/initDb';
 
 // Load environment variables
@@ -29,8 +30,9 @@ server.register(jwt, {
 });
 
 // Register routes
-server.register(itineraryRoutes, { prefix: '/api' });
+server.register(itineraryRoutes, { prefix: '/api/generator' });
 server.register(authRoutes, { prefix: '/api/auth' });
+server.register(savedItineraryRoutes, { prefix: '/api' });
 
 // Health check route
 server.get('/health', async () => {
@@ -48,6 +50,10 @@ const start = async () => {
     
     await server.listen({ port: Number(PORT), host: '0.0.0.0' });
     console.log(`Server listening on port ${PORT}`);
+    
+    // Log all registered routes
+    console.log('Registered routes:');
+    server.printRoutes();
   } catch (err) {
     server.log.error(err);
     process.exit(1);

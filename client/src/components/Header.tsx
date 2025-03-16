@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
-import { MapPinIcon } from 'lucide-react';
+import { MapPinIcon, BookmarkIcon } from 'lucide-react';
 
 export default function Header() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -23,6 +23,12 @@ export default function Header() {
               <span className="text-sm text-muted-foreground mr-4">
                 Hello, {user?.name}
               </span>
+              <Link href="/saved-itineraries">
+                <Button variant="ghost" className="flex items-center gap-1">
+                  <BookmarkIcon className="h-4 w-4" />
+                  Saved Itineraries
+                </Button>
+              </Link>
               <Link href="/profile">
                 <Button variant="ghost">Profile</Button>
               </Link>

@@ -85,6 +85,7 @@ export class ItineraryController {
   ): Promise<void> {
     try {
       const { id } = request.params;
+      console.log(id);
       const itinerary = await this.itineraryService.findById(id);
 
       if (!itinerary) {

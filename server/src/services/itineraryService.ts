@@ -41,10 +41,12 @@ interface DayPlan {
 interface Itinerary {
   id: string;
   destination: string;
-  startDate: string;
-  endDate: string;
+  startDate?: string;
+  endDate?: string;
   budget?: number;
   items: DayPlan[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface CreateItineraryDTO {
@@ -161,9 +163,9 @@ export class ItineraryService {
     
     return {
       id: dbItinerary.id,
-      destination: dbItinerary.name, // Use name as destination
-      startDate: dbItinerary.createdAt.toISOString().split('T')[0], // Use createdAt as startDate
-      endDate: new Date(dbItinerary.createdAt.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // createdAt + 7 days as endDate
+      destination: dbItinerary.name,
+      createdAt: dbItinerary.createdAt,
+      updatedAt: dbItinerary.updatedAt,
       items: groupedItems
     };
   }
@@ -258,7 +260,9 @@ export async function generateItinerary(params: ItineraryParams): Promise<Itiner
       startDate,
       endDate,
       budget,
-      items: itemsWithIds
+      items: itemsWithIds,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     return itinerary;
@@ -302,7 +306,9 @@ export async function regenerateItem(
           date: new Date().toISOString().split('T')[0],
           activities: [mockActivity]
         }
-      ]
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     
     return mockItinerary;

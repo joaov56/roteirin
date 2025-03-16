@@ -21,34 +21,32 @@ interface ItineraryItem {
 
 interface SavedItinerary {
   id: string;
-  name: string;
+  destination: string;
   userId: string;
-  createdAt: string;
-  updatedAt: string;
   items: ItineraryItem[];
 }
 
 export default function SavedItinerariesPage() {
   const [itineraries, setItineraries] = useState<SavedItinerary[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is loaded
-    if (user === undefined) {
-      setIsAuthLoading(true);
-    } else {
-      setIsAuthLoading(false);
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-      
-      fetchItineraries();
+    // Check if authentication is still loading
+    if (authLoading) {
+      return;
     }
-  }, [user, router]);
+    
+    // If auth is done loading and there's no user, redirect to login
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    
+    // If we have a user, fetch the itineraries
+    fetchItineraries();
+  }, [user, authLoading, router]);
 
   const fetchItineraries = async () => {
     try {
@@ -64,6 +62,7 @@ export default function SavedItinerariesPage() {
       }
 
       const data = await response.json();
+      console.log(data);
       setItineraries(data);
     } catch (error) {
       console.error('Error fetching itineraries:', error);
@@ -94,7 +93,7 @@ export default function SavedItinerariesPage() {
     }
   };
 
-  if (isAuthLoading || loading) {
+  if (authLoading || loading) {
     return (
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold mb-6">Saved Itineraries</h1>
@@ -128,7 +127,7 @@ export default function SavedItinerariesPage() {
                   <div className="flex items-center gap-2">
                     <CalendarIcon className="h-5 w-5" />
                     <div className="text-sm">
-                      {new Date(itinerary.createdAt).toLocaleDateString()}
+                      {itinerary.destination}
                     </div>
                   </div>
                   <Button 
@@ -140,7 +139,7 @@ export default function SavedItinerariesPage() {
                     <TrashIcon className="h-4 w-4" />
                   </Button>
                 </div>
-                <CardTitle className="text-xl">{itinerary.name}</CardTitle>
+                <CardTitle className="text-xl">{itinerary.destination}</CardTitle>
               </CardHeader>
               
               <CardContent className="p-4">

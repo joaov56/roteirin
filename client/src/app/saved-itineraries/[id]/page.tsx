@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { CalendarIcon, MapPinIcon, ArrowLeftIcon } from 'lucide-react';
+import { CalendarIcon, ArrowLeftIcon } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { toast } from 'sonner';
+import UserItineraryDisplay from '@/components/UserItineraryDisplay';
 
 interface ItineraryItem {
   id: string;
@@ -21,7 +21,7 @@ interface ItineraryItem {
 
 interface SavedItinerary {
   id: string;
-  name: string;
+  destination: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -31,26 +31,31 @@ interface SavedItinerary {
 export default function ItineraryDetailPage() {
   const [itinerary, setItinerary] = useState<SavedItinerary | null>(null);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
 
   useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+    
     if (!user) {
       router.push('/login');
       return;
     }
-
-    if (user && id) {
+    
+    // If we have a user and an ID, fetch the itinerary
+    if (id) {
       fetchItinerary();
     }
-  }, [user, id, router]);
+  }, [user, authLoading, id, router]);
 
   const fetchItinerary = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/itinerary/${id}`, {
+      const response = await fetch(`http://localhost:3001/api/itinerary/${id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -75,7 +80,7 @@ export default function ItineraryDetailPage() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold mb-6">Itinerary Details</h1>
@@ -112,48 +117,24 @@ export default function ItineraryDetailPage() {
       
       <Card className="overflow-hidden">
         <CardHeader className="bg-primary text-primary-foreground">
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="h-5 w-5" />
-            <div className="text-sm">
-              Saved on {new Date(itinerary.createdAt).toLocaleDateString()}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CalendarIcon className="h-5 w-5" />
+              <div className="text-sm">
+                Saved on {new Date(itinerary.createdAt).toLocaleDateString()}
+              </div>
             </div>
           </div>
-          <CardTitle className="text-2xl">{itinerary.name}</CardTitle>
+          <CardTitle className="text-2xl">{itinerary.destination}</CardTitle>
         </CardHeader>
         
-        <CardContent className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Places</h2>
-          
-          <div className="space-y-6">
-            {itinerary.items
-              .sort((a, b) => a.order - b.order)
-              .map((item, index) => (
-                <Card key={item.id} className="overflow-hidden">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <div className="text-sm text-muted-foreground mb-1">
-                          Stop {index + 1}
-                        </div>
-                        <h4 className="text-lg font-medium">{item.name}</h4>
-                      </div>
-                    </div>
-                    
-                    {item.description && (
-                      <p className="text-muted-foreground mt-2">{item.description}</p>
-                    )}
-                    
-                    <Separator className="my-3" />
-                    
-                    <div className="text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <MapPinIcon className="h-4 w-4" />
-                        <span>{item.address}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+        <CardContent className="p-0">
+          <div className="border-b border-border">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Your Itinerary</h2>
+              
+              <UserItineraryDisplay itinerary={{...itinerary, startDate: itinerary.createdAt, endDate: itinerary.updatedAt}} />
+            </div>
           </div>
         </CardContent>
       </Card>

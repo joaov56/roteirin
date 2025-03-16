@@ -1,10 +1,11 @@
+import 'reflect-metadata';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import dotenv from 'dotenv';
 import { itineraryRoutes } from './routes/itinerary';
 import { authRoutes } from './routes/auth';
-
+import { initializeDatabase } from './config/initDb';
 
 // Load environment variables
 dotenv.config();
@@ -39,6 +40,12 @@ server.get('/health', async () => {
 // Start server
 const start = async () => {
   try {
+    // Initialize database connection
+    const dbInitialized = await initializeDatabase();
+    if (!dbInitialized) {
+      throw new Error('Failed to initialize database');
+    }
+    
     await server.listen({ port: Number(PORT), host: '0.0.0.0' });
     console.log(`Server listening on port ${PORT}`);
   } catch (err) {

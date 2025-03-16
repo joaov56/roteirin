@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import bcrypt from 'bcrypt';
-import { User, createUser, findUserByEmail } from '../models/User';
+import { findUserByEmail, createUser } from '../repositories/UserRepository';
 
 interface RegisterRequest {
   email: string;
@@ -21,7 +21,7 @@ export const register = async (
     const { email, password, name } = request.body;
 
     // Check if user already exists
-    const existingUser = findUserByEmail(email);
+    const existingUser = await findUserByEmail(email);
     if (existingUser) {
       return reply.status(400).send({ error: 'User with this email already exists' });
     }
@@ -31,7 +31,7 @@ export const register = async (
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Create new user
-    const user = createUser({
+    const user = await createUser({
       email,
       password: hashedPassword,
       name
@@ -55,7 +55,7 @@ export const login = async (
     const { email, password } = request.body;
 
     // Find user by email
-    const user = findUserByEmail(email);
+    const user = await findUserByEmail(email);
     if (!user) {
       return reply.status(401).send({ error: 'Invalid email or password' });
     }

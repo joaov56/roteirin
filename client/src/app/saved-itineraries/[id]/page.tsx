@@ -45,8 +45,7 @@ export default function ItineraryDetailPage() {
       router.push('/login');
       return;
     }
-    
-    // If we have a user and an ID, fetch the itinerary
+
     if (id) {
       fetchItinerary();
     }

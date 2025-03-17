@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { CalendarIcon, MapPinIcon, TrashIcon } from 'lucide-react';
+import { MapPinIcon, PlaneIcon, TrashIcon } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -17,6 +17,11 @@ interface ItineraryItem {
   latitude: number;
   longitude: number;
   order: number;
+  activities: Array<{
+    title: string;
+    location: string;
+  }>;
+  date: string;
 }
 
 interface SavedItinerary {
@@ -124,12 +129,7 @@ export default function SavedItinerariesPage() {
             <Card key={itinerary.id} className="overflow-hidden">
               <CardHeader className="bg-primary text-primary-foreground">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CalendarIcon className="h-5 w-5" />
-                    <div className="text-sm">
-                      {itinerary.destination}
-                    </div>
-                  </div>
+                  <CardTitle className="text-xl flex items-center gap-2"><PlaneIcon className="h-6 w-6" size={32} />{itinerary.destination}</CardTitle>
                   <Button 
                     variant="ghost" 
                     size="sm"
@@ -139,7 +139,7 @@ export default function SavedItinerariesPage() {
                     <TrashIcon className="h-4 w-4" />
                   </Button>
                 </div>
-                <CardTitle className="text-xl">{itinerary.destination}</CardTitle>
+                
               </CardHeader>
               
               <CardContent className="p-4">
@@ -150,17 +150,18 @@ export default function SavedItinerariesPage() {
                     .slice(0, 3)
                     .map((item) => (
                       <div key={item.id}>
-                        <div className="font-medium">{item.name}</div>
+                        <div className="font-medium">{item.activities[0].title} - {item.date}</div>
                         <div className="text-sm text-muted-foreground flex items-center gap-1">
                           <MapPinIcon className="h-3 w-3" />
-                          <span>{item.address}</span>
+                          <span>{item.activities[0].location}</span>
                         </div>
                       </div>
                     ))}
                   
                   {itinerary.items.length > 3 && (
                     <div className="text-sm text-muted-foreground">
-                      +{itinerary.items.length - 3} more places
+                      +{itinerary.items.reduce((total, item) => total + (item.activities?.length || 0), 0) - 
+                        (itinerary.items.slice(0, 3).reduce((total, item) => total + (item.activities?.length || 0), 0))} more activities
                     </div>
                   )}
                 </div>

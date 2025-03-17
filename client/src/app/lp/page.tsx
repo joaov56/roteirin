@@ -74,7 +74,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-blue-900">Choose Your Destination</h3>
                 <p className="text-blue-700">
-                  Tell us where you want to go and when. From popular cities to hidden gems, we've got you covered.
+                  Tell us where you want to go and when. From popular cities to hidden gems, we&apos;ve got you covered.
                 </p>
               </div>
 
@@ -84,7 +84,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-blue-900">Set Your Preferences</h3>
                 <p className="text-blue-700">
-                  Specify your budget and interests. Whether you're into museums, food, or hiking, we'll tailor
+                  Specify your budget and interests. Whether you&apos;re into museums, food, or hiking, we&apos;ll tailor
                   recommendations.
                 </p>
               </div>

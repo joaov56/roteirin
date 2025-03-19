@@ -1,32 +1,57 @@
-export interface User {
-  id: string;
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+
+export interface IUser {
+  name: string;
   email: string;
   password: string;
-  name: string;
   createdAt: Date;
   updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-// In-memory user storage for simplicity
-// In a real application, you would use a database
-export const users: User[] = [];
+interface UserModel extends mongoose.Model<IUser> {
+  comparePassword(candidatePassword: string): Promise<boolean>;
+}
 
-export const findUserByEmail = (email: string): User | undefined => {
-  return users.find(user => user.email === email);
-};
+const userSchema = new mongoose.Schema<IUser>({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6
+  }
+}, {
+  timestamps: true
+});
 
-export const findUserById = (id: string): User | undefined => {
-  return users.find(user => user.id === id);
-};
-
-export const createUser = (user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): User => {
-  const newUser: User = {
-    ...user,
-    id: crypto.randomUUID(),
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
+// Hash password before saving
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
   
-  users.push(newUser);
-  return newUser;
-}; 
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error: any) {
+    next(error);
+  }
+});
+
+// Method to compare password
+userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+export const User = mongoose.model<IUser, UserModel>('User', userSchema); 

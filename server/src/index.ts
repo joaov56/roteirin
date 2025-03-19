@@ -2,47 +2,46 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import dotenv from 'dotenv';
-import { itineraryRoutes } from './routes/itinerary';
-import { authRoutes } from './routes/auth';
-
+import { userRoutes } from './routes/userRoutes';
+import { connectDatabase } from './config/database';
+import authPlugin from './plugins/auth';
 
 // Load environment variables
 dotenv.config();
 
-const PORT = process.env.PORT || 3001;
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
-
-// Create Fastify instance
-const server = Fastify({
+const fastify = Fastify({
   logger: true
 });
 
 // Register plugins
-server.register(cors, {
-  origin: true,
-  credentials: true
+fastify.register(cors, {
+  origin: true
 });
 
-server.register(jwt, {
-  secret: JWT_SECRET
+fastify.register(jwt, {
+  secret: process.env.JWT_SECRET || 'your-secret-key'
 });
+
+fastify.register(authPlugin);
+
+// Connect to MongoDB
+connectDatabase(fastify);
 
 // Register routes
-server.register(itineraryRoutes, { prefix: '/api' });
-server.register(authRoutes, { prefix: '/api/auth' });
+fastify.register(userRoutes, { prefix: '/api/users' });
 
 // Health check route
-server.get('/health', async () => {
+fastify.get('/health', async () => {
   return { status: 'ok' };
 });
 
-// Start server
+// Start the server
 const start = async () => {
   try {
-    await server.listen({ port: Number(PORT), host: '0.0.0.0' });
-    console.log(`Server listening on port ${PORT}`);
+    await fastify.listen({ port: 3001, host: '0.0.0.0' });
+    fastify.log.info(`Server is running on ${fastify.server.address()}`);
   } catch (err) {
-    server.log.error(err);
+    fastify.log.error(err);
     process.exit(1);
   }
 };

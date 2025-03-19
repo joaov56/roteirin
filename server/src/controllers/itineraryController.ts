@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { generateItinerary } from '../services/itineraryService';
+import { generateItinerary, saveItinerary } from '../services/itineraryService';
+import { IItinerary } from '../models/itinerary.model';
 
 
 interface ItineraryRequest {
@@ -8,6 +9,33 @@ interface ItineraryRequest {
   endDate: string;
   budget?: number;
   preferences?: string[];
+}
+
+interface SaveItineraryRequest {
+  itinerary: {
+    id: string;
+    destination: string;
+    name?: string;
+    startDate: string;
+    endDate: string;
+    userId: string;
+    budget?: number;
+    items: Array<{
+      day: number;
+      date: string;
+      activities: Array<{
+        id: string;
+        time: string;
+        title: string;
+        description: string;
+        location: string;
+        price: number;
+        currency: string;
+        bookingLink: string;
+        isPaid: boolean;
+      }>;
+    }>;
+  };
 }
 
 export async function generateItineraryController(
@@ -44,3 +72,18 @@ export async function generateItineraryController(
     return reply.code(500).send({ error: 'Failed to generate itinerary' });
   }
 } 
+
+export async function saveItineraryController(
+  request: FastifyRequest<{ Body: SaveItineraryRequest }>,
+  reply: FastifyReply
+  ) {
+  const { itinerary } = request.body;
+  console.log(itinerary)
+  console.log(request.user)
+    
+  itinerary.userId = request.user.userId
+  const savedItinerary = await saveItinerary(itinerary);
+  console.log(savedItinerary)
+
+  return reply.code(200).send('a')
+}

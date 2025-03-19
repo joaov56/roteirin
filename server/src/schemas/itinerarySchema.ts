@@ -54,3 +54,11 @@ export const itinerarySchema = {
     }
   }
 }; 
+
+export const saveItinerarySchema = {
+  body: {
+    type: 'object',
+    required: ['itinerary'],
+    properties: { itinerary: { type: 'object' } }
+  }
+};

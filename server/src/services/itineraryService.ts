@@ -36,16 +36,18 @@ interface DayPlan {
   activities: Activity[];
 }
 
-interface Itinerary {
+interface IItinerary {
   id: string;
   destination: string;
+  name?: string;
   startDate: string;
+  userId?: string;
   endDate: string;
   budget?: number;
   items: DayPlan[];
 }
 
-export async function generateItinerary(params: ItineraryParams): Promise<Itinerary> {
+export async function generateItinerary(params: ItineraryParams): Promise<IItinerary> {
   const { destination, startDate, endDate, budget, preferences } = params;
   
   // Calculate number of days
@@ -128,7 +130,7 @@ export async function generateItinerary(params: ItineraryParams): Promise<Itiner
     }));
 
     // Create the final itinerary object
-    const itinerary: Itinerary = {
+    const itinerary: IItinerary = {
       id: uuidv4(),
       destination,
       startDate,
@@ -144,11 +146,29 @@ export async function generateItinerary(params: ItineraryParams): Promise<Itiner
   }
 }
 
-export async function saveItinerary(itinerary: Itinerary, itineraryItems: IItineraryItem[]) {
+export async function saveItinerary(itinerary: IItinerary) {
   try {
-    const savedItinerary = await Itinerary.create(itinerary);
-    const savedItineraryItems = await ItineraryItem.create(itineraryItems);
-    return {savedItinerary, savedItineraryItems};
+    const itineraryInfo = {
+      name: itinerary.name,
+      destination: itinerary.destination,
+      userId: itinerary.userId,
+      startDate: itinerary.startDate,
+      finalDate: itinerary.endDate,
+      budget: itinerary.budget
+    }
+
+    const savedItinerary = await Itinerary.create(itineraryInfo)
+
+    const itineraryItems  = itinerary.items.map((item) => ({
+      itineraryId: savedItinerary._id,
+      day: item.day,
+      date: item.date,
+      activities: item.activities,
+    }))
+
+    const savedItineraryItems = await ItineraryItem.create(itineraryItems)
+
+    return {savedItinerary, savedItineraryItems}
   } catch (error) {
     console.error('Error saving itinerary:', error);
     throw new Error('Failed to save itinerary');
@@ -159,7 +179,7 @@ export async function regenerateItem(
   itineraryId: string,
   itemIndex: number,
   budget?: number
-): Promise<Itinerary> {
+): Promise<IItinerary> {
   try {
     // In a real application, you would fetch the existing itinerary from a database
     // For this demo, we'll create a mock itinerary with a single regenerated activity
@@ -177,11 +197,12 @@ export async function regenerateItem(
     };
     
     // Create a mock itinerary with the regenerated activity
-    const mockItinerary: Itinerary = {
+    const mockItinerary: IItinerary = {
       id: itineraryId,
       destination: "Sample Destination",
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      userId: '',
       budget,
       items: [
         {

@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
 import { regenerateItem } from '../services/itineraryService';
-import { itinerarySchema } from '../schemas/itinerarySchema';
-import { generateItineraryController } from '../controllers/itineraryController';
+import { itinerarySchema, saveItinerarySchema } from '../schemas/itinerarySchema';
+import { generateItineraryController, saveItineraryController } from '../controllers/itineraryController';
 
 export async function itineraryRoutes(
   fastify: FastifyInstance,
@@ -48,4 +48,10 @@ export async function itineraryRoutes(
       }
     }
   });
+
+  fastify.post('/save', {
+    schema: saveItinerarySchema,
+    preValidation: [fastify.authenticate],
+    handler: saveItineraryController
+  })
 } 

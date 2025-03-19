@@ -1,8 +1,12 @@
 import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
 import { regenerateItem } from '../services/itineraryService';
-import { itinerarySchema, saveItinerarySchema } from '../schemas/itinerarySchema';
-import { generateItineraryController, saveItineraryController } from '../controllers/itineraryController';
+import { getUserItinerariesSchema, itinerarySchema, saveItinerarySchema } from '../schemas/itinerarySchema';
+import { 
+  generateItineraryController, 
+  saveItineraryController,
+  getUserItinerariesController
+} from '../controllers/itineraryController';
 
 export async function itineraryRoutes(
   fastify: FastifyInstance,
@@ -54,4 +58,11 @@ export async function itineraryRoutes(
     preValidation: [fastify.authenticate],
     handler: saveItineraryController
   })
+
+  // Get all itineraries for the logged-in user
+  fastify.get('/user', {
+    schema: getUserItinerariesSchema,
+    preValidation: [fastify.authenticate],
+    handler: getUserItinerariesController
+  });
 } 

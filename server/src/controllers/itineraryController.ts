@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { generateItinerary, saveItinerary } from '../services/itineraryService';
+import { generateItinerary, saveItinerary, getUserItineraries } from '../services/itineraryService';
 import { IItinerary } from '../models/itinerary.model';
 
 
@@ -86,4 +86,19 @@ export async function saveItineraryController(
   console.log(savedItinerary)
 
   return reply.code(200).send('a')
+}
+
+export async function getUserItinerariesController(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    const userId = request.user.userId;
+    const itineraries = await getUserItineraries(userId);
+    
+    return reply.code(200).send({ itineraries });
+  } catch (error) {
+    request.log.error(error);
+    return reply.code(500).send({ error: 'Failed to fetch user itineraries' });
+  }
 }

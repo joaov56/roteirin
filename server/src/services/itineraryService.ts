@@ -218,4 +218,31 @@ export async function regenerateItem(
     console.error('Error regenerating item:', error);
     throw new Error('Failed to regenerate item');
   }
+}
+
+export async function getUserItineraries(userId: string) {
+  try {
+    const userItineraries = await Itinerary.find({ userId });
+    
+    const itinerariesWithItems = await Promise.all(
+      userItineraries.map(async (itinerary) => {
+        const items = await ItineraryItem.find({ itineraryId: itinerary._id }).sort({ day: 1 });
+        
+        return {
+          id: itinerary._id,
+          destination: itinerary.destination,
+          name: itinerary.name,
+          startDate: itinerary.startDate,
+          endDate: itinerary.finalDate,
+          budget: itinerary.budget,
+          items
+        };
+      })
+    );
+    
+    return itinerariesWithItems;
+  } catch (error) {
+    console.error('Error fetching user itineraries:', error);
+    throw new Error('Failed to fetch user itineraries');
+  }
 } 

@@ -1,3 +1,4 @@
+import axiosInstance from '@/lib/axios';
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -68,6 +69,16 @@ export const regenerateItineraryItem = async (
     return response.data;
   } catch (error) {
     console.error('Error regenerating itinerary item:', error);
+    throw error;
+  }
+};
+
+export const getUserItineraries = async (): Promise<Itinerary[]> => {
+  try {
+    const response = await axiosInstance.get<{ itineraries: Itinerary[] }>('/itinerary/user');
+    return response.data.itineraries;
+  } catch (error) {
+    console.error('Error fetching user itineraries:', error);
     throw error;
   }
 };

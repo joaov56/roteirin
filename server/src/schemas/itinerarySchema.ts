@@ -62,3 +62,28 @@ export const saveItinerarySchema = {
     properties: { itinerary: { type: 'object' } }
   }
 };
+
+export const getUserItinerariesSchema =  {
+  response: {
+    200: {
+      type: 'object',
+      properties: {
+        itineraries: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              destination: { type: 'string' },
+              name: { type: 'string' },
+              startDate: { type: 'string' },
+              endDate: { type: 'string' },
+              budget: { type: 'number' },
+              items: { type: 'array' }
+            }
+          }
+        }
+      }
+    }
+  }
+}

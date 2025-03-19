@@ -101,8 +101,8 @@ export default function ItinerariesPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
-        <div className="container py-10">
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex justify-center">
+        <div className="container py-10 max-w-6xl mx-auto">
           <div className="space-y-8">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

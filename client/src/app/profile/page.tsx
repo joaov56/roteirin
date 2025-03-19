@@ -210,7 +210,7 @@ export default function ProfilePage() {
                             </div>
                           </Button>
                         </Link>
-                        <Link href="/itineraries" className="w-full">
+                        <Link href="/profile/itineraries" className="w-full">
                           <Button
                             variant="outline"
                             className="w-full flex items-center justify-center gap-2 h-auto py-6"

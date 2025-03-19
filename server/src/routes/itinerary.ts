@@ -9,7 +9,7 @@ export async function itineraryRoutes(
   options: FastifyPluginOptions
 ): Promise<void> {
   // Generate a new itinerary
-  fastify.post('/itinerary', {
+  fastify.post('/', {
     schema: itinerarySchema,
     handler: generateItineraryController
   });

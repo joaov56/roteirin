@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import { IItineraryItem, Itinerary, ItineraryItem } from '../models/itinerary.model';
 
 dotenv.config();
 
@@ -140,6 +141,17 @@ export async function generateItinerary(params: ItineraryParams): Promise<Itiner
   } catch (error) {
     console.error('Error generating itinerary:', error);
     throw new Error('Failed to generate itinerary');
+  }
+}
+
+export async function saveItinerary(itinerary: Itinerary, itineraryItems: IItineraryItem[]) {
+  try {
+    const savedItinerary = await Itinerary.create(itinerary);
+    const savedItineraryItems = await ItineraryItem.create(itineraryItems);
+    return {savedItinerary, savedItineraryItems};
+  } catch (error) {
+    console.error('Error saving itinerary:', error);
+    throw new Error('Failed to save itinerary');
   }
 }
 

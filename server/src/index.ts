@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { userRoutes } from './routes/userRoutes';
 import { connectDatabase } from './config/database';
 import authPlugin from './plugins/auth';
+import { itineraryRoutes } from './routes/itinerary';
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +30,9 @@ connectDatabase(fastify);
 
 // Register routes
 fastify.register(userRoutes, { prefix: '/api/users' });
+
+
+fastify.register(itineraryRoutes, { prefix: '/api/itinerary' });
 
 // Health check route
 fastify.get('/health', async () => {

@@ -25,12 +25,12 @@ export interface LoginData {
 }
 
 export const register = async (data: RegisterData): Promise<User> => {
-  const response = await axiosInstance.post('/auth/register', data);
+  const response = await axiosInstance.post('/api/users/register', data);
   return response.data;
 };
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
-  const response = await axiosInstance.post('/auth/login', data);
+  const response = await axiosInstance.post('users/login', data);
   
   // Store token in localStorage
   if (response.data.token) {

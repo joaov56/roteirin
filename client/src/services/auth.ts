@@ -25,7 +25,7 @@ export interface LoginData {
 }
 
 export const register = async (data: RegisterData): Promise<User> => {
-  const response = await axiosInstance.post('/api/users/register', data);
+  const response = await axiosInstance.post('/users/register', data);
   return response.data;
 };
 

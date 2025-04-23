@@ -31,6 +31,21 @@ export async function userRoutes(fastify: FastifyInstance) {
     }
   }, userController.login);
 
+  // Social login
+  fastify.post('/social-login', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['email', 'provider', 'accessToken'],
+        properties: {
+          email: { type: 'string', format: 'email' },
+          provider: { type: 'string' },
+          accessToken: { type: 'string' }
+        }
+      }
+    }
+  }, userController.socialLogin);
+
   // Get user profile (protected route)
   fastify.get('/profile', {
     onRequest: [fastify.authenticate]

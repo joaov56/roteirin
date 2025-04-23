@@ -12,6 +12,12 @@ interface LoginBody {
   password: string;
 }
 
+interface SocialLoginBody {
+  email: string;
+  provider: string;
+  accessToken: string;
+}
+
 interface AuthenticatedRequest extends FastifyRequest {
   user: {
     userId: string;
@@ -60,6 +66,31 @@ export const userController = {
     } catch (error: any) {
       request.log.error(error);
       if (error?.message === 'Invalid credentials') {
+        return reply.status(401).send({ error: error.message });
+      }
+      return reply.status(500).send({ error: 'Internal server error' });
+    }
+  },
+
+  async socialLogin(request: FastifyRequest<{ Body: SocialLoginBody }>, reply: FastifyReply) {
+    try {
+      const { email, provider, accessToken } = request.body;
+
+      const user = await userService.socialLogin(email, provider, accessToken);
+
+      // Generate JWT token
+      const token = await reply.jwtSign({
+        userId: user.id,
+        email: user.email
+      });
+
+      return reply.send({ user, token });
+    } catch (error: any) {
+      request.log.error(error);
+      if (error?.message === 'User not found') {
+        return reply.status(404).send({ error: error.message });
+      }
+      if (error?.message === 'Invalid access token') {
         return reply.status(401).send({ error: error.message });
       }
       return reply.status(500).send({ error: 'Internal server error' });

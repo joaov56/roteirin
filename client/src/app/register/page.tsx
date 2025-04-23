@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,8 +30,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSocialRegistration, setIsSocialRegistration] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -41,6 +43,18 @@ export default function RegisterPage() {
       password: "",
     },
   });
+
+  useEffect(() => {
+    const email = searchParams.get("email");
+    const name = searchParams.get("name");
+    const provider = searchParams.get("provider");
+
+    if (email && name && provider) {
+      setIsSocialRegistration(true);
+      form.setValue("email", email);
+      form.setValue("name", name);
+    }
+  }, [searchParams, form]);
 
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
@@ -61,7 +75,9 @@ export default function RegisterPage() {
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
           <p className="text-sm text-muted-foreground">
-            Enter your information to create an account
+            {isSocialRegistration
+              ? "Complete your registration"
+              : "Enter your information to create an account"}
           </p>
         </div>
 
@@ -87,25 +103,32 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="email@example.com" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="email@example.com"
+                      {...field}
+                      disabled={isSocialRegistration}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!isSocialRegistration && (
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Create account"}
             </Button>

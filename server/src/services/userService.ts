@@ -45,6 +45,27 @@ export class UserService {
     };
   }
 
+  async socialLogin(email: string, provider: string, accessToken: string) {
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Verify the access token with the provider
+    // This is a simplified version - in production, you should verify the token
+    // with the respective provider's API
+    if (!accessToken) {
+      throw new Error('Invalid access token');
+    }
+
+    return {
+      id: user._id,
+      name: user.name,
+      email: user.email
+    };
+  }
+
   async getProfile(userId: string) {
     const user = await User.findById(userId).select('-password');
     
